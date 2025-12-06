@@ -1,0 +1,20 @@
+1.Security Risk: Why is a world-writable directory (like uploads/) more dangerous than a world-writable file? What could an attacker do? 
+- A world-writable directory is far riskier because attacks can fully manipulate files inside by creating, deleting or renaming them by gaining full structural control.
+This allows for the entire directory to be compromised as malicious scripts are uploaded, web shells are planted, trusted binaries are replaced, privelges are escalated, and 
+app data is destroyed. 
+
+2.Permission Bits: Explain what -perm -002 means versus -perm /111. Why do we use different options for different searches?
+- -perm -002 matches items where the world -write bit is explicitly set, requiring all specified bits to be present. -perm /111 matches files with any execute bit set for user, group, or others. 
+The two differ because one checks specific required permissions, while the other detects any executable visibility across permission groups.
+
+3.Real-World Impact: If you ran this scanner on a production web server and found 50 world-writable files, what immediate actions should you take?
+- The immediate actions I would take would be to identify affected applications, remove world-write access, and verify file integrity against backups.
+Then I would check logs for tampering, confirm no malicious scripts were introduced, and temporarily restrict access. Larger numbers usually indicate misconfiguration or potential compromise.
+
+4.Process Substitution: Explain why using find ... | while read doesn't work for counting, but while read ... done < <(find ...) does. What is the difference?
+- Using find ... | while read runs the loop in a subshell, so variable changes don’t persist afterward, causing counts to reset. Process substitution keeps the loop in the parent shell, preserving updates.
+This distinction explains why < <(find ...) correctly tracks state while piped loops fail reliably
+
+5.Automation: How would you schedule this script to run automatically every day at 2 AM and email the results to a security team?
+-I would create a cron job by editing crontab and scheduling the script to run at 2 AM, piping output to a mail command. For example: 0 2 * * * /path/script.sh | mail -s "Scan" team@example.com. 
+Ensure the script is executable, email tools installed, and logging configured correctly. 
